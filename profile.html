@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile | Schedule Buddy</title>
+  <link rel="stylesheet" href="./assets/styles/main.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>👤 Your Profile</h1>
+    
+    <div id="profile-card" class="card">
+      <p><strong>Name:</strong> <span id="profile-name">Loading...</span></p>
+      <p><strong>Major:</strong> <span id="profile-major">Loading...</span></p>
+      <p><strong>Pronouns:</strong> <span id="profile-pronouns">Loading...</span></p>
+      <p><strong>Bio:</strong> <span id="profile-bio">Loading...</span></p>
+    </div>
+
+    <button id="editProfileBtn" class="btn">✏️ Edit Profile</button>
+    <button id="backToDashboardBtn" class="btn">⬅️ Back to Dashboard</button>
+
+    <!-- Hidden Edit Section -->
+    <div id="edit-section" class="card hidden">
+      <h2>Edit Your Info</h2>
+      <input id="edit-name" type="text" placeholder="Enter your name" />
+      <input id="edit-major" type="text" placeholder="Enter your major" />
+      <input id="edit-pronouns" type="text" placeholder="Enter pronouns" />
+      <textarea id="edit-bio" rows="3" placeholder="Write your bio"></textarea>
+      <button id="saveChangesBtn" class="btn">💾 Save Changes</button>
+      <button id="cancelEditBtn" class="btn cancel">❌ Cancel</button>
+    </div>
+  </div>
+
+  <script type="module" src="./scripts/firebase-config.js"></script>
+  <script type="module" src="./scripts/profile.js"></script>
+</body>
+</html>

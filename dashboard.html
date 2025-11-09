@@ -1,55 +1,52 @@
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Schedule Buddy | Dashboard</title>
-  <link rel="stylesheet" href="./assets/styles/main.css">
-  <style>
-    .upload-box {
-      background: rgba(255,255,255,0.1);
-      border-radius: 1rem;
-      padding: 2rem;
-      margin-top: 1rem;
-    }
-    .results {
-      margin-top: 1rem;
-      text-align: left;
-      background: rgba(255,255,255,0.1);
-      border-radius: .5rem;
-      padding: 1rem;
-      font-size: .9rem;
-      white-space: pre-wrap;
-    }
-    .match-card {
-      background: rgba(255,255,255,0.15);
-      border-radius: .5rem;
-      padding: 1rem;
-      margin-top: .5rem;
-    }
-  </style>
+  <link rel="stylesheet" href="./assets/styles/dashboard.css" />
 </head>
 <body>
-  <div class="container">
-    <h1 class="logo">Schedule Buddy</h1>
-    <p>Upload your class schedule screenshot below 👇</p>
 
-    <div class="upload-box">
-      <input type="file" id="schedule-image" accept="image/*">
-      <button id="read-btn">Read Schedule</button>
-      <p id="status"></p>
+  <!-- ================= SIDEBAR ================= -->
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <h2>Menu</h2>
+      <button id="closeSidebar">&times;</button>
     </div>
+    <ul class="sidebar-links">
+      <li><a href="#" id="profile-link">👤 Profile</a></li>
+      <li><a href="#" id="friends-link">🤝 Friends</a></li>
+      <li><a href="#" id="editbio-link">✍️ Edit Bio</a></li>
+      <li><a href="#" id="logout-btn">🚪 Logout</a></li>
+    </ul>
+  </div>
 
-    <div class="results" id="result-text"></div>
+  <!-- ================= MAIN CONTENT ================= -->
+  <div class="main-content">
+    <header class="top-header">
+      <button id="openSidebar" class="menu-btn">☰ Menu</button>
+      <h1>Schedule Buddy Dashboard</h1>
+    </header>
 
-    <h2 style="margin-top:1.5rem;">Your Matches</h2>
-    <div id="matches"></div>
+    <section id="schedule-upload">
+      <h2>Upload Your Schedule 📅</h2>
+      <div class="upload-box">
+        <input type="file" id="schedule-file" accept="image/*" />
+        <button id="readSchedule">Read Schedule</button>
+      </div>
+      <p id="status" style="margin-top:10px; color: #fff;">Status messages will appear here</p>
+
+      <!-- Optional: where extracted text or matches appear -->
+      <div id="result"></div>
+      <div id="matches"></div>
+    </section>
   </div>
 
   <!-- Firebase and scripts -->
-  <script type="module" src="./scripts/firebase-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script type="module" src="./scripts/dashboard.js"></script>
+<script type="module" src="./scripts/firebase-config.js"></script>
+<script type="module" src="./scripts/dashboard.js"></script>
+
 </body>
 </html>
+

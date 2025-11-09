@@ -1,295 +1,289 @@
-/*import { auth, db } from "./firebase-config.js";
-import {
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import {
-  setDoc,
-  doc,
-  getDocs,
-  collection
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+// Wait for the DOM to fully load before running anything
+document.addEventListener("DOMContentLoaded", () => {
 
-// HTML elements
-const fileInput = document.getElementById("schedule-image");
-const readBtn = document.getElementById("read-btn");
-const resultText = document.getElementById("result-text");
-const statusText = document.getElementById("status");
-const matchesDiv = document.getElementById("matches");
-const logoutBtn = document.getElementById("logout-btn");
+  // Get elements safely
+  const sidebar = document.getElementById("sidebar");
+  const openBtn = document.getElementById("openSidebar");
+  const closeBtn = document.getElementById("closeSidebar");
+  const readBtn = document.getElementById("readSchedule");
+  const logoutBtn = document.getElementById("logout-btn");
+  const fileInput = document.getElementById("schedule-file");
+  const statusText = document.getElementById("status");
+  const resultText = document.getElementById("result");
+  const matchesDiv = document.getElementById("matches");
 
-let currentUser = null;
-
-// 🔐 Auth check
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    currentUser = user;
-  } else {
-    window.location.href = "index.html";
-  }
-});
-
-// 🚪 Logout
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", async () => {
-    await signOut(auth);
-    window.location.href = "index.html";
-  });
-}
-
-// 💡 String similarity helper
-function similarity(a, b) {
-  if (a === b) return 1;
-  const longer = a.length > b.length ? a : b;
-  const shorter = a.length > b.length ? b : a;
-  const longerLength = longer.length;
-  if (longerLength === 0) return 1.0;
-  const sameChars = Array.from(shorter).filter(c => longer.includes(c)).length;
-  return sameChars / longerLength;
-}
-
-// 📸 Handle Schedule Upload
-readBtn.addEventListener("click", async () => {
-  if (!fileInput.files[0]) {
-    statusText.textContent = "Please select an image first.";
-    return;
-  }
-
-  const file = fileInput.files[0];
-  statusText.textContent = "📖 Reading schedule...";
-  resultText.textContent = "";
-  matchesDiv.innerHTML = "";
-
-  // 🧠 Step 1: OCR with Tesseract
-  const result = await Tesseract.recognize(file, "eng", {
-    logger: m => console.log(m),
+  // Safety check — helps you debug if anything is missing
+  console.log({
+    sidebar, openBtn, closeBtn, readBtn, logoutBtn, fileInput
   });
 
-  // Step 1: Extract all text
-  const text = result.data.text;
-
-  // Step 2: Clean & extract possible course codes
-  const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
-
-  // Step 3: Filter using regex for valid course codes (looks for MATH 2063 or MECH 1072C)
-  const courseRegex = /(MECH|MATH|PHYS|CHEM|BIOL|CS|ECE|ENGR)\s*\d{4,5}[A-Z]?\s*-\s*\d{3}/g;
-  const extractedClasses = [];
-
-  for (const line of lines) {
-    const match = line.match(courseRegex);
-    if (match) extractedClasses.push(...match.map(x => x.trim()));
-  }
-
-  // 🧹 Clean duplicates and normalize formats
-    const normalized = extractedClasses.map(c =>
-    c.toUpperCase().replace(/\s+/g, " ").replace(/\s*-\s/g, " - ").trim()
-    );
-    const uniqueClasses = [...new Set(normalized)].sort();
-
-    // Show cleaned result
-    resultText.textContent = uniqueClasses.join("\n");
-
-  if (uniqueClasses.length > 0) {
-    statusText.textContent = `✅ Found ${uniqueClasses.length} course(s)!`;
-    statusText.style.color = "#10b981";
-  } else {
-    statusText.textContent = "⚠️ No valid courses found. Try a clearer screenshot.";
-    statusText.style.color = "#facc15";
-  }
-
-  // Save to Firestore
-  await setDoc(doc(db, "schedules", currentUser.uid), {
-    email: currentUser.email,
-    classes: uniqueClasses,
-  });
-
-  // Find classmates
-  findMatches(uniqueClasses);
-});
-
-// 🤝 Find matches with other users
-async function findMatches(myClasses) {
-  matchesDiv.innerHTML = "🔍 Searching for classmates...";
-  const snapshot = await getDocs(collection(db, "schedules"));
-  let results = [];
-
-  snapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-    if (data.email !== currentUser.email) {
-      const common = data.classes.filter((cls) =>
-        myClasses.some((myCls) => myCls === cls)
-      );
-      if (common.length > 0) {
-        results.push({ email: data.email, overlap: common.length, common });
-      }
-    }
-  });
-
-  results.sort((a, b) => b.overlap - a.overlap);
-
-  matchesDiv.innerHTML = "";
-  if (results.length === 0) {
-    matchesDiv.innerHTML = "😔 No matches yet — try again later!";
-    return;
-  }
-
-  results.forEach((r) => {
-    const card = document.createElement("div");
-    card.className = "match-card";
-    card.innerHTML = `
-      <strong>${r.email}</strong><br>
-      ${r.overlap} matching class${r.overlap > 1 ? "es" : ""}<br>
-      <small>${r.common.join(", ")}</small><br>
-      <button class="fav-btn">⭐ Favorite</button>
-    `;
-    matchesDiv.appendChild(card);
-  });
-}import { auth, db } from "./firebase-config.js";
-import {
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import {
-  setDoc,
-  doc,
-  getDocs,
-  collection
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-// HTML elements
-const fileInput = document.getElementById("schedule-image");
-const readBtn = document.getElementById("read-btn");
-const resultText = document.getElementById("result-text");
-const statusText = document.getElementById("status");
-const matchesDiv = document.getElementById("matches");
-const logoutBtn = document.getElementById("logout-btn");
-
-let currentUser = null;
-
-// 🔐 Auth check
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    currentUser = user;
-  } else {
-    window.location.href = "index.html";
-  }
-});
-
-// 🚪 Logout
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", async () => {
-    await signOut(auth);
-    window.location.href = "index.html";
-  });
-}
-
-// 📸 Handle Schedule Upload
-readBtn.addEventListener("click", async () => {
-  if (!fileInput.files[0]) {
-    statusText.textContent = "Please select an image first.";
-    return;
-  }
-
-  const file = fileInput.files[0];
-  statusText.textContent = "📖 Reading schedule...";
-  resultText.textContent = "";
-  matchesDiv.innerHTML = "";
-
-  try {
-    // 🧠 Step 1: OCR with Tesseract
-    const result = await Tesseract.recognize(file, "eng", {
-      logger: m => console.log(m)
+  // 🟩 Sidebar open
+  if (openBtn && sidebar) {
+    openBtn.addEventListener("click", () => {
+      sidebar.classList.add("open");
     });
-    const text = result.data.text;
-    console.log("🧾 Raw OCR text:\n", text);
+  }
 
-    // Step 2: Split text into lines
-    const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+  // 🟥 Sidebar close
+  if (closeBtn && sidebar) {
+    closeBtn.addEventListener("click", () => {
+      sidebar.classList.remove("open");
+    });
+  }
 
-    // Step 3: Regex to detect more course patterns
-    const courseRegex = /\b([A-Z]{3,6})\s*([0-9]{3,4}[A-Z]?)\s*-\s*([0-9]{3})\b/g;
+  // 🚪 Logout
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  }
 
-    const extractedClasses = [];
-
-    for (const line of lines) {
-      const matches = line.matchAll(courseRegex);
-      for (const match of matches) {
-        extractedClasses.push(`${match[1]} ${match[2]} - ${match[3]}`);
+  // 📅 Handle Schedule Upload
+  if (readBtn) {
+    readBtn.addEventListener("click", async () => {
+      if (!fileInput.files[0]) {
+        statusText.textContent = "Please select an image";
+        return;
       }
-    }
 
-    // 🧹 Step 4: Clean & remove duplicates
-    const normalized = extractedClasses.map(c =>
-      c.toUpperCase().replace(/\s+/g, " ").replace(/\s*-\s/g, " - ").trim()
-    );
-    const uniqueClasses = [...new Set(normalized)].sort();
-
-    if (uniqueClasses.length > 0) {
-      resultText.textContent = uniqueClasses.join("\n");
-      statusText.textContent = `✅ Found ${uniqueClasses.length} course(s)!`;
-      statusText.style.color = "#10b981";
-    } else {
+      const file = fileInput.files[0];
+      statusText.textContent = "📖 Reading schedule...";
       resultText.textContent = "";
-      statusText.textContent = "⚠️ No valid courses found. Try a clearer screenshot.";
-      statusText.style.color = "#facc15";
-    }
+      matchesDiv.innerHTML = "";
 
-    // 💾 Save to Firestore
-    await setDoc(doc(db, "schedules", currentUser.uid), {
-      email: currentUser.email,
-      classes: uniqueClasses,
-    });
-
-    // 🤝 Find classmates
-    findMatches(uniqueClasses);
-
-  } catch (err) {
-    console.error("Error processing schedule:", err);
-    statusText.textContent = "❌ Error reading image. Try again.";
-  }
-});
-
-// 🤝 Find matches with other users
-async function findMatches(myClasses) {
-  matchesDiv.innerHTML = "🔍 Searching for classmates...";
-  const snapshot = await getDocs(collection(db, "schedules"));
-  let results = [];
-
-  snapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-    if (data.email !== currentUser.email) {
-      const common = data.classes.filter((cls) =>
-        myClasses.some((myCls) => myCls === cls)
-      );
-      if (common.length > 0) {
-        results.push({ email: data.email, overlap: common.length, common });
+      try {
+        const { data } = await Tesseract.recognize(file, "eng");
+        statusText.textContent = "✅ OCR complete!";
+      } catch (error) {
+        console.error(error);
+        statusText.textContent = "Error reading schedule!";
       }
-    }
-  });
-
-  results.sort((a, b) => b.overlap - a.overlap);
-
-  matchesDiv.innerHTML = "";
-  if (results.length === 0) {
-    matchesDiv.innerHTML = "😔 No matches yet — try again later!";
-    return;
+    });
   }
 
-  results.forEach((r) => {
-    const card = document.createElement("div");
-    card.className = "match-card";
-    card.innerHTML = `
-      <strong>${r.email}</strong><br>
-      ${r.overlap} matching class${r.overlap > 1 ? "es" : ""}<br>
-      <small>${r.common.join(", ")}</small><br>
-      <button class="fav-btn">⭐ Favorite</button>
-    `;
-    matchesDiv.appendChild(card);
-  });
-}
-*/
+}); // <-- End of DOMContentLoaded
 
 import { auth, db } from "./firebase-config.js";
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import {
+  setDoc,
+  doc,
+  getDocs,
+  collection
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+// HTML elements
+const fileInput = document.getElementById("schedule-image");
+const readBtn = document.getElementById("read-btn");
+const resultText = document.getElementById("result-text");
+const statusText = document.getElementById("status");
+const matchesDiv = document.getElementById("matches");
+const logoutBtn = document.getElementById("logout-btn");
+
+let currentUser = null;
+
+// 🔐 Auth check
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUser = user;
+  } else {
+    window.location.href = "index.html";
+  }
+});
+
+// 🚪 Logout
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  });
+}
+
+// 📸 Handle Schedule Upload
+
+if (readBtn) {
+    readBtn.addEventListener("click", async () => {
+        if (!fileInput.files[0]) {
+        statusText.textContent = "Please select an image first.";
+        return;
+        }
+
+        // ... your OCR logic here ...
+    
+
+
+        const file = fileInput.files[0];
+        statusText.textContent = "📖 Reading schedule...";
+        resultText.textContent = "";
+        matchesDiv.innerHTML = "";
+
+        try {
+            // 🧠 Step 1: OCR with Tesseract
+            const result = await Tesseract.recognize(file, "eng", {
+            logger: m => console.log(m)
+            });
+            const text = result.data.text;
+            console.log("🧾 Raw OCR text:\n", text);
+
+            // Step 2: Split text into lines
+            const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+
+            // Step 3: Regex to detect more course patterns
+            const courseRegex = /\b([A-Z]{3,6})\s*([0-9]{3,4}[A-Z]?)\s*-\s*([0-9]{3})\b/g;
+
+            const extractedClasses = [];
+
+            for (const line of lines) {
+            const matches = line.matchAll(courseRegex);
+            for (const match of matches) {
+                extractedClasses.push(`${match[1]} ${match[2]} - ${match[3]}`);
+            }
+            }
+
+            // 🧹 Step 4: Clean & remove duplicates
+            const normalized = extractedClasses.map(c =>
+            c.toUpperCase().replace(/\s+/g, " ").replace(/\s*-\s*/g, " - ").trim()
+            );
+            const uniqueClasses = [...new Set(normalized)].sort();
+
+            if (uniqueClasses.length > 0) {
+            resultText.textContent = uniqueClasses.join("\n");
+            statusText.textContent = `✅ Found ${uniqueClasses.length} course(s)!`;
+            statusText.style.color = "#10b981";
+            } else {
+            resultText.textContent = "";
+            statusText.textContent = "⚠️ No valid courses found. Try a clearer screenshot.";
+            statusText.style.color = "#facc15";
+            }
+
+            // 💾 Save to Firestore
+            await setDoc(doc(db, "schedules", currentUser.uid), {
+            email: currentUser.email,
+            classes: uniqueClasses,
+            });
+
+            // 🤝 Find classmates
+            findMatches(uniqueClasses);
+
+        } catch (err) {
+            console.error("Error processing schedule:", err);
+            statusText.textContent = "❌ Error reading image. Try again.";
+        }
+        });
+    } else {
+    console.warn("⚠️ readBtn not found — check the button ID in dashboard.html");
+    }
+
+// 🤝 Find matches with other users
+async function findMatches(myClasses) {
+  matchesDiv.innerHTML = "🔍 Searching for classmates...";
+  const snapshot = await getDocs(collection(db, "schedules"));
+  let results = [];
+
+  snapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+    if (data.email !== currentUser.email) {
+      const common = data.classes.filter((cls) =>
+        myClasses.some((myCls) => myCls === cls)
+      );
+      if (common.length > 0) {
+        results.push({ email: data.email, overlap: common.length, common });
+      }
+    }
+  });
+
+  results.sort((a, b) => b.overlap - a.overlap);
+
+  matchesDiv.innerHTML = "";
+  if (results.length === 0) {
+    matchesDiv.innerHTML = "😔 No matches yet — try again later!";
+    return;
+  }
+
+  results.forEach((r) => {
+    const card = document.createElement("div");
+    card.className = "match-card";
+    card.innerHTML = `
+      <strong>${r.email}</strong><br>
+      ${r.overlap} matching class${r.overlap > 1 ? "es" : ""}<br>
+      <small>${r.common.join(", ")}</small><br>
+      <button class="fav-btn">⭐ Favorite</button>
+    `;
+    matchesDiv.appendChild(card);
+  });
+}
+// 🌈 SIDEBAR TOGGLE LOGIC
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
+  const openBtn = document.getElementById("openSidebar");
+  const closeBtn = document.getElementById("closeSidebar");
+
+  if (!sidebar || !openBtn || !closeBtn) {
+    console.error("Sidebar elements not found. Check IDs in HTML!");
+    return;
+  }
+
+  // Open sidebar
+  openBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    sidebar.classList.add("open");
+  });
+
+  // Close sidebar
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    sidebar.classList.remove("open");
+  });
+
+  // Click outside to close
+  document.addEventListener("click", (e) => {
+    if (!sidebar.contains(e.target) && !openBtn.contains(e.target)) {
+      sidebar.classList.remove("open");
+    }
+  });
+});
+
+// 🧭 Sidebar Navigation Buttons
+const profileLink = document.getElementById("profile-link");
+const friendsLink = document.getElementById("friends-link");
+const editBioLink = document.getElementById("editbio-link");
+
+// Profile page
+if (profileLink) {
+  profileLink.addEventListener("click", () => {
+    window.location.href = "profile.html";
+  });
+}
+
+// Friends page (if you’ll add later)
+if (friendsLink) {
+  friendsLink.addEventListener("click", () => {
+    window.location.href = "friends.html";
+  });
+}
+
+// Edit Bio (can go to same profile page for now)
+if (editBioLink) {
+  editBioLink.addEventListener("click", () => {
+    window.location.href = "profile.html";
+  });
+}
+
+// Logout
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  });
+}
+
+
+
+/*import { auth, db } from "./firebase-config.js";
 import {
   onAuthStateChanged,
   signOut
@@ -392,7 +386,7 @@ readBtn.addEventListener("click", async () => {
     }
 
     const cleaned = extracted.map((c) =>
-      c.toUpperCase().replace(/\s+/g, " ").replace(/\s*-\s*/g, " - ").trim()
+      c.toUpperCase().replace(/\s+/g, " ").replace(/\s*-\s/g, " - ").trim()
     );
     const unique = [...new Set(cleaned)].sort();
 
@@ -445,4 +439,4 @@ async function findMatches(myClasses) {
               )}</small></div>`
           )
           .join("");
-}
+}*/

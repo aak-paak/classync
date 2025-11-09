@@ -1,0 +1,307 @@
+/* 🌈 General theme */
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #4a3aff, #6c9cff);
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* ===================== SIDEBAR ===================== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px; /* Hidden by default */
+  width: 250px;
+  height: 100%;
+  background: rgba(30, 25, 70, 0.95);
+  backdrop-filter: blur(8px);
+  transition: left 0.3s ease;
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  border-radius: 0 15px 15px 0;
+}
+
+.sidebar.open {
+  left: 0; /* Moves in */
+}
+
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  color: #fff;
+}
+
+#closeSidebar {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+#closeSidebar:hover {
+  color: #5cc9f5;
+}
+
+.sidebar-links {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.sidebar-links li {
+  margin: 10px 0;
+}
+
+.sidebar-links a {
+  display: block;
+  padding: 10px 20px;
+  color: #cbd1ff;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: 0.3s;
+}
+
+.sidebar-links a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-left: 3px solid #5cc9f5;
+  color: #fff;
+}
+
+.menu-btn {
+  background: #00d084;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: 0.2s;
+}
+
+.menu-btn:hover {
+  background: #00b674;
+}
+
+
+/* ===================== MAIN CONTENT ===================== */
+.main-content {
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+  text-align: center;
+}
+
+/* HEADER */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px 20px;
+  border-radius: 15px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+#openSidebar {
+  background: #00d084;
+  border: none;
+  padding: 10px 15px;
+  font-size: 1.2rem;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#openSidebar:hover {
+  background: #00ba76;
+}
+
+/* ===================== SECTIONS ===================== */
+section {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 25px;
+  margin: 30px auto;
+  max-width: 600px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: left;
+}
+
+/* Upload Schedule Section */
+.upload-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-box input[type="file"] {
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+}
+
+.upload-box button {
+  background: #00d084;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.upload-box button:hover {
+  background: #00ba76;
+}
+
+#schedule-status {
+  color: #ffd86b;
+  font-style: italic;
+}
+
+/* Edit Bio Section */
+#edit-bio-input {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-family: "Poppins";
+  resize: none;
+  outline: none;
+}
+
+#save-bio-btn {
+  background: #00d084;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#save-bio-btn:hover {
+  background: #00ba76;
+}
+
+.top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.menu-btn {
+  background: #00d084;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: 0.2s;
+}
+
+.menu-btn:hover {
+  background: #00b674;
+}
+
+.profile-container {
+  text-align: center;
+  color: white;
+  margin-top: 60px;
+}
+
+.profile-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  width: 350px;
+  margin: 20px auto;
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-card input,
+.profile-card textarea {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  width: 100%;
+}
+
+.profile-card button {
+  background: #00cc66;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.profile-card button:hover {
+  background: #00b359;
+}
+
+.back-btn {
+  display: inline-block;
+  margin-top: 12px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+}
+.card {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin: 10px 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.btn {
+  background-color: #00c853;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin: 5px;
+}
+
+.btn.cancel {
+  background-color: #ff5252;
+}
